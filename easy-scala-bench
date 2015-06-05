@@ -1,0 +1,24 @@
+#!/bin/sh
+
+SCRIPT_DIR=$( cd "$( dirname "$0" )" && pwd -P )
+
+SRC_DIR="${SCRIPT_DIR}/src/main/scala"
+SRC_PATH="${SRC_DIR}/Bench.scala"
+
+# make source directory
+mkdir -p "${SRC_DIR}"
+
+# create scala source file
+{
+  echo "package easy_scala_bench"
+  echo "class Bench {"
+  echo "  @org.openjdk.jmh.annotations.Benchmark"
+  echo "  def bench(): Unit = {"
+  cat
+  echo "  }"
+  echo "}"
+} > "${SRC_PATH}"
+
+# run sbt-jmh
+cd "$SCRIPT_DIR" && sbt 'run -i 3 -wi 3 -f 1 -t 1 easy_scala_bench.Bench'
+
