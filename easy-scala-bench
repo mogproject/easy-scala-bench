@@ -25,13 +25,13 @@ mkdir -p "${SRC_DIR}"
 
 # create scala source file
 {
-  echo "package easy_scala_bench"
-  echo "class Bench {"
-  echo "  @org.openjdk.jmh.annotations.Benchmark"
-  echo "  def bench(): Unit = {"
-  cat
-  echo "  }"
-  echo "}"
+    echo "package easy_scala_bench"
+    echo "class Bench {"
+    echo "  @org.openjdk.jmh.annotations.Benchmark"
+    echo "  def bench(): Unit = {"
+    cat
+    echo "  }"
+    echo "}"
 } > "${SRC_PATH}"
 
 # run sbt-jmh
