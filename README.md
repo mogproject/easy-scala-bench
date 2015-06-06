@@ -1,10 +1,10 @@
 # easy-scala-bench
-Run sbt-jmh in easy way.
+Run [sbt-jmh](https://github.com/ktoso/sbt-jmh) in easy way.
 
 ## Dependencies
 
 - sbt
-- /bin/sh
+- Bash (/bin/bash)
 
 ## Quickstart
 
@@ -23,3 +23,19 @@ echo 'for (i <- 1 to 1000) for (j <- 1 to 1000) i + j' | ./easy-scala-bench
 
 Enjoy!
 
+## Testing with State
+
+Want to keep state or parameters during tests?  
+Write two blocks separated by the line ```====```. The first block will be used for the context and the last one is for the benchmark code.
+
+e.g.
+
+```
+echo '
+val xs = (1 to 1000000).toList
+====
+xs.length
+' | ./easy-scala-bench
+```
+
+In this case, only ```xs.length``` should be measured in the benchmark.

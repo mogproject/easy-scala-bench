@@ -1,15 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
 function __readlink_f {
-    local target=$1
-    local name=
-
-    while [ "$target" != "" ]; do
-        cd $(dirname "$target")
-        name=$(basename "$target")
-        target=$(readlink "$name")
-    done
-    echo "$(pwd -P)/${name}"
+    local t="$1"; local n=
+    (while [ "$t" ]; do cd $(dirname "$t"); n=$(basename "$t"); t=$(readlink "$n"); done; echo "$(pwd -P)/$n")
 }
 
 SCRIPT_PATH=$(__readlink_f "$0")
@@ -20,18 +13,33 @@ SRC_PATH="${SRC_DIR}/Bench.scala"
 
 set -e
 
+# capture input to array
+declare -a context_lines
+declare -a benchmark_lines
+
+while IFS= read line; do
+    if [ "$line" = '====' ]; then
+        context_lines=("${benchmark_lines[@]}")
+        unset benchmark_lines[@]
+    else
+        benchmark_lines+=("$line")
+    fi
+done
+
 # make source directory
 mkdir -p "${SRC_DIR}"
 
 # create scala source file
 {
-    echo "package easy_scala_bench"
-    echo "class Bench {"
-    echo "  @org.openjdk.jmh.annotations.Benchmark"
-    echo "  def bench(): Unit = {"
-    cat
-    echo "  }"
-    echo "}"
+    echo 'package easy_scala_bench'
+    echo '@org.openjdk.jmh.annotations.State(org.openjdk.jmh.annotations.Scope.Thread)'
+    echo 'class Bench {'
+    printf '%s\n' "${context_lines[@]}"
+    echo '  @org.openjdk.jmh.annotations.Benchmark'
+    echo '  def bench(): Unit = {'
+    printf '%s\n' "${benchmark_lines[@]}"
+    echo '  }'
+    echo '}'
 } > "${SRC_PATH}"
 
 # run sbt-jmh
