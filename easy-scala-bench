@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function __readlink_f {
+function __readlink_f() {
     local t="$1"; local n=
     (while [ "$t" ]; do cd $(dirname "$t"); n=$(basename "$t"); t=$(readlink "$n"); done; echo "$(pwd -P)/$n")
 }
