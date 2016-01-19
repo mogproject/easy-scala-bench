@@ -42,6 +42,12 @@ mkdir -p "${SRC_DIR}"
     echo '}'
 } > "${SRC_PATH}"
 
+# options for sbt
+declare -a sbt_opts
+
+# no colors if we have no terminal
+[[ -t 1 ]] || sbt_opts+=('-no-colors')
+
 # run sbt-jmh
-(cd "$SCRIPT_DIR" && sbt 'run -i 3 -wi 3 -f 1 -t 1 easy_scala_bench.Bench')
+(cd "$SCRIPT_DIR" && sbt "${sbt_opts[@]}" 'run -i 3 -wi 3 -f 1 -t 1 easy_scala_bench.Bench')
 
